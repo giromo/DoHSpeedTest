@@ -179,7 +179,7 @@ function updateChart() {
                 y: {
                     title: {
                         display: window.innerWidth >= 768,
-                        text: 'DNS Servers (Slowest → Fastest)'
+                        text: 'DNS Servers (Slowest to Fastest)'
                     },
                     ticks: {
                         maxRotation: 0,
@@ -309,11 +309,9 @@ async function performDNSTests() {
         updateResult(server);
     }
 
-    // === فقط این خط اضافه شد ===
     showBestDNS();
 }
 
-// === بقیه کد شما (کپی دقیق) ===
 async function measureDNSSpeed(dohUrl, hostname, serverType = 'post', allowCors = false) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -406,7 +404,7 @@ function updateResult(server) {
 
     row.innerHTML = `
         <td class="text-left py-2 px-4 dark:text-gray-300">${server.name} 
-        <span class="cursor-pointer ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex" onclick="copyToClipboard('DoH Server URL: ${server.url}' + '\\n' + 'IP Addresses: ${server.ips.join(', ')}', this)" title="Copy server details">
+        <span class="copy-btn cursor-pointer ml-2 px-2 py-1 text-xs rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex" onclick="copyToClipboard('DoH Server URL: ${server.url}' + '\\n' + 'IP Addresses: ${server.ips.join(', ')}', this)" title="Copy server details">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
             </svg>
@@ -481,7 +479,7 @@ function sortTable(columnIndex) {
 function copyToClipboard(text, buttonElement) {
     event.stopPropagation();
     navigator.clipboard.writeText(text).then(() => {
-        buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 border border-green-400 text-green-700 dark:text-green-300 rounded flex items-center gap-1 transition-all duration-200 select-none inline-flex";
+        buttonElement.className = "copy-btn cursor-pointer ml-2 px-2 py-1 text-xs rounded flex items-center gap-1 transition-all duration-200 select-none inline-flex copied";
         buttonElement.innerHTML = `
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
@@ -490,7 +488,7 @@ function copyToClipboard(text, buttonElement) {
         `;
 
         setTimeout(() => {
-            buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex";
+            buttonElement.className = "copy-btn cursor-pointer ml-2 px-2 py-1 text-xs rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex";
             buttonElement.innerHTML = `
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
@@ -500,7 +498,7 @@ function copyToClipboard(text, buttonElement) {
         }, 2000);
     }).catch(err => {
         console.error('Error in copying text: ', err);
-        buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 border border-red-400 text-red-700 dark:text-red-300 rounded flex items-center gap-1 transition-all duration-200 select-none inline-flex";
+        buttonElement.className = "copy-btn cursor-pointer ml-2 px-2 py-1 text-xs rounded flex items-center gap-1 transition-all duration-200 select-none inline-flex";
         buttonElement.innerHTML = `
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -508,7 +506,7 @@ function copyToClipboard(text, buttonElement) {
             Error
         `;
         setTimeout(() => {
-            buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex";
+            buttonElement.className = "copy-btn cursor-pointer ml-2 px-2 py-1 text-xs rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex";
             buttonElement.innerHTML = `
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
@@ -634,36 +632,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const dohModal = document.getElementById("dohModal");
     const dohBtn = document.getElementById("editDoHButton");
     const closeDohBtn = dohModal.querySelector(".close");
-    const addDoHBtn = document.getElementById("addDoH");
-    const newDoHInput = document.getElementById("newDoH");
-    const dohList = document.getElementById("dohList");
-
-    function renderDoHList() {
-        dohList.innerHTML = '';
-        dnsServers.forEach((server, index) => {
-            const li = document.createElement("li");
-            li.className = 'px-2 py-1 mb-1 bg-gray-200 rounded flex justify-between items-center border-b border-gray-300 dark:bg-gray-700 dark:border-gray-600';
-
-            const serverText = document.createElement("span");
-            serverText.textContent = `${server.name}: ${server.url}`;
-            li.appendChild(serverText);
-
-            const removeBtn = document.createElement("button");
-            removeBtn.className = 'bg-red-500 text-white rounded px-2 py-1 ml-2 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800';
-            removeBtn.textContent = 'Delete';
-            removeBtn.onclick = function () {
-                dnsServers.splice(index, 1);
-                renderDoHList();
-            };
-
-            li.appendChild(removeBtn);
-            dohList.appendChild(li);
-        });
-    }
+    const addDoHBtn = document.getElementById("suggestDoHServer");
+    const newDoHName = document.getElementById("newDoHName");
+    const newDoHUrl = document.getElementById("newDoHUrl");
+    const newDoHIPs = document.getElementById("newDoHIPs");
 
     dohBtn.onclick = function () {
         dohModal.style.display = "block";
-        renderDoHList();
     };
 
     closeDohBtn.onclick = function () {
@@ -671,20 +646,27 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     addDoHBtn.onclick = function () {
-        const serverDetails = newDoHInput.value.split(', ');
-        if (serverDetails.length >= 2) {
-            const [name, url] = serverDetails;
+        const name = newDoHName.value.trim();
+        const url = newDoHUrl.value.trim();
+        const ips = newDoHIPs.value.trim();
 
-            const isDuplicate = dnsServers.some(server => server.url === url || server.name === name);
-            if (!isDuplicate) {
-                checkServerCapabilities(name, url);
-            } else {
-                alert("A server with the same name or URL already exists. Please enter a unique name and URL.");
-            }
-        } else {
-            alert("Please enter DoH server details in the correct format: Name, URL");
+        if (!name || !url) {
+            alert('Please fill in Name and URL.');
+            return;
         }
-        newDoHInput.value = '';
+
+        const title = encodeURIComponent(`[DNS Suggestion] Add ${name}`);
+        const body = encodeURIComponent(
+            `**Suggested DNS Server**\n\n` +
+            `- **Name**: ${name}\n` +
+            `- **DoH URL**: ${url}\n` +
+            `- **IPs**: ${ips || 'Not provided'}\n\n` +
+            `Submitted via DoHSpeedTest tool.`
+        );
+
+        const issuesUrl = `https://github.com/Argh94/DoHSpeedTest/issues/new?title=${title}&body=${body}`;
+        window.open(issuesUrl, '_blank');
+        dohModal.style.display = 'none';
     };
 
     window.onclick = function (event) {
@@ -692,59 +674,4 @@ document.addEventListener('DOMContentLoaded', function () {
             dohModal.style.display = "none";
         }
     };
-
-    async function checkServerCapabilities(name, url) {
-        let supportsGet = false;
-        let supportsPost = false;
-        let corsGet = false;
-        let corsPost = false;
-
-        async function testMethod(method, mode) {
-            try {
-                const options = {
-                    method: method,
-                    mode: mode,
-                    headers: {}
-                };
-
-                if (method === 'POST') {
-                    options.headers['Content-Type'] = 'application/dns-message';
-                    options.body = new Uint8Array();
-                }
-
-                const response = await fetch(url, options);
-                if (response.ok || mode === 'no-cors') {
-                    const corsEnabled = mode === 'cors' && response.headers.get('Access-Control-Allow-Origin') === '*';
-                    return {success: true, cors: corsEnabled};
-                }
-                return {success: false, cors: false};
-            } catch (error) {
-                console.error(`Error testing ${method} method with ${mode}:`, error);
-                return {success: false, cors: false};
-            }
-        }
-
-        const results = await Promise.all([
-            testMethod('GET', 'cors'),
-            testMethod('POST', 'cors'),
-            testMethod('GET', 'no-cors'),
-            testMethod('POST', 'no-cors')
-        ]);
-
-        supportsGet = results[0].success || results[2].success;
-        supportsPost = results[1].success || results[3].success;
-        corsGet = results[0].cors;
-        corsPost = results[1].cors;
-
-        if (supportsGet || supportsPost) {
-            const type = supportsGet ? 'get' : 'post';
-            const allowCors = supportsGet ? corsGet : corsPost;
-
-            dnsServers.push({name, url, type, allowCors, ips: []});
-            renderDoHList();
-            alert(`Server added successfully. GET support: ${supportsGet} (CORS: ${corsGet}), POST support: ${supportsPost} (CORS: ${corsPost})`);
-        } else {
-            alert('Failed to add server. Neither GET nor POST methods succeeded. Check console for details.');
-        }
-    }
 });
