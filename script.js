@@ -2,7 +2,6 @@ const checkButton = document.getElementById('checkButton');
 const editButton = document.getElementById('editButton');
 const topWebsites = ['google.com', 'youtube.com', 'facebook.com', 'instagram.com', 'chatgpt.com', 'x.com', 'whatsapp.com', 'reddit.com', 'wikipedia.org', 'amazon.com', 'tiktok.com', 'pinterest.com'];
 
-// === DNSهای ایرانی اضافه شدند ===
 const dnsServers = [
     { name: "Shecan (شکن)", url: "https://free.shecan.ir/dns-query", ips: ["178.22.122.100", "185.51.200.2"] },
     { name: "Begzar (بگذر)", url: "https://dns.begzar.ir/dns-query", ips: [] },
@@ -10,7 +9,6 @@ const dnsServers = [
     { name: "Radar Game", url: "https://dns.radar.game/dns-query", ips: ["10.202.10.10", "10.202.10.11"] },
     { name: "Electro", url: "https://dns.electrotm.org/dns-query", ips: ["78.157.42.100", "78.157.42.101"] },
     { name: "xStack", url: "https://rustdns.devefun.org/dns-query", ips: [] },
-    // === DNSهای جهانی اصلی شما (بدون تغییر) ===
     { name: "AdGuard", url: "https://dns.adguard-dns.com/dns-query", ips: ["94.140.14.14", "94.140.15.15"] },
     { name: "AliDNS", url: "https://dns.alidns.com/dns-query", ips: ["223.5.5.5", "223.6.6.6"] },
     { name: "OpenDNS", url: "https://doh.opendns.com/dns-query", ips: ["208.67.222.222", "208.67.220.220"] },
@@ -43,7 +41,6 @@ const dnsServers = [
 let dnsChart;
 let chartData = [];
 
-// === تابع جدید: نمایش بهترین DNS + کپی IPها ===
 function showBestDNS() {
     const validServers = dnsServers.filter(s => s.speed && s.speed.avg !== 'Unavailable' && typeof s.speed.avg === 'number');
     if (validServers.length === 0) {
@@ -80,7 +77,6 @@ function copyBestDNS(ips) {
     });
 }
 
-// === همه کد اصلی شما (بدون تغییر) ===
 function updateChartWithData(server) {
     const existingIndex = chartData.findIndex(item => item.name === server.name);
     const serverInfo = {
