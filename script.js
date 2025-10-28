@@ -1,3 +1,23 @@
+/*
+ * DoHSpeedTest - Real-time DNS over HTTPS (DoH) Speed Testing Tool
+ * Copyright (C) 2023 Silviu Stroe
+ *
+ * This file is part of DoHSpeedTest.
+ *
+ * DoHSpeedTest is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DoHSpeedTest is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with DoHSpeedTest. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 const checkButton = document.getElementById('checkButton');
 const editButton = document.getElementById('editButton');
 const topWebsites = [
@@ -6,6 +26,7 @@ const topWebsites = [
     'tiktok.com', 'pinterest.com'
 ];
 
+// === لیست کامل DNSهای شما (ایرانی + جهانی) ===
 const dnsServers = [
     { name: "Shecan (شکن)", url: "https://free.shecan.ir/dns-query", ips: ["178.22.122.100", "185.51.200.2"] },
     { name: "Begzar (بگذر)", url: "https://dns.begzar.ir/dns-query", ips: [] },
@@ -50,35 +71,34 @@ const dnsServers = [
 let dnsChart;
 let chartData = [];
 
+// نمایش بهترین DNS بعد از تست
 function showBestDNS() {
     const validServers = dnsServers.filter(s => s.speed && s.speed.avg !== 'Unavailable' && typeof s.speed.avg === 'number');
     if (validServers.length === 0) {
         document.getElementById('bestDNSContainer').innerHTML = `
-            <div class="text-center p-6 bg-yellow-50 border border-yellow-300 rounded-lg">
-                <p class="text-yellow-800">هیچ DNS فعالی پیدا نشد!</p>
+            <div class="p-6 bg-red-500 bg-opacity-20 border border-red-400 rounded-xl text-center">
+                <p class="text-red-300 font-medium">No active DNS server found!</p>
             </div>`;
         return;
     }
     validServers.sort((a, b) => a.speed.avg - b.speed.avg);
     const best = validServers[0];
-    const ips = best.ips && best.ips.length > 0 ? best.ips : ['آدرس IP موجود نیست'];
+    const ips = best.ips && best.ips.length > 0 ? best.ips.join(', ') : 'No IP available';
     document.getElementById('bestDNSContainer').innerHTML = `
-        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300">
-            <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+        <div class="p-6 bg-green-500 bg-opacity-20 border border-green-400 rounded-xl glass-card">
+            <h3 class="text-2xl font-bold text-green-300 mb-3 flex items-center gap-2">
                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/><path d="M3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z"/><path d="M14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
-                بهترین DNS برای شما
+                Best DNS for You
             </h3>
-            <div class="bg-white text-gray-800 p-4 rounded-lg mb-4 font-mono text-lg break-all">
-                <div class="font-bold text-green-600 mb-2">${best.name}</div>
-                <div class="flex flex-wrap gap-2">
-                    ${ips.map(ip => `<span class="bg-gray-100 px-3 py-1 rounded">${ip}</span>`).join('')}
-                </div>
+            <div class="bg-white bg-opacity-10 p-4 rounded-lg mb-4 font-mono text-lg break-all">
+                <div class="font-bold text-green-300 mb-2">${best.name}</div>
+                <div class="text-cyan-200">${ips}</div>
             </div>
-            <button onclick="copyBestDNS('${ips.join(', ')}')" class="w-full bg-white text-green-600 font-bold py-3 rounded-lg hover:bg-green-50 transition-all flex items-center justify-center gap-2">
+            <button onclick="copyBestDNS('${ips}')" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-700 transition-all flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 8a1 1 0 00-1 1v6a1 1 0 001 1h8a1 1 0 001-1V9a1 1 0 00-1-1H6z"/></svg>
-                کپی IPها
+                Copy IPs
             </button>
-            <p class="text-xs mt-3 opacity-80">فقط این IPها رو در تنظیمات شبکه/روتر/گیم خودتون وارد کنید.</p>
+            <p class="text-xs text-gray-300 mt-3 opacity-80">Use these IPs in your network, router, or game settings.</p>
         </div>
     `;
     document.getElementById('bestDNSContainer').scrollIntoView({ behavior: 'smooth' });
@@ -88,23 +108,24 @@ function copyBestDNS(ips) {
     navigator.clipboard.writeText(ips).then(() => {
         const btn = event.target;
         const oldText = btn.innerHTML;
-        btn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> کپی شد!`;
-        btn.classList.replace('bg-white', 'bg-green-100');
-        setTimeout(() => { btn.innerHTML = oldText; btn.classList.replace('bg-green-100', 'bg-white'); }, 2000);
+        btn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!`;
+        btn.classList.replace('bg-cyan-600', 'bg-green-600');
+        setTimeout(() => {
+            btn.innerHTML = oldText;
+            btn.classList.replace('bg-green-600', 'bg-cyan-600');
+        }, 2000);
     });
 }
 
 async function warmUpDNSServers() {
     const warmUpPromises = dnsServers.map(server => Promise.all(topWebsites.map(website => measureDNSSpeed(server.url, website, server.type, server.allowCors))));
     await Promise.all(warmUpPromises);
+    console.log("Warm-up phase completed");
 }
 
 async function updateLoadingMessage(message) {
-    document.getElementById('loadingMessage').innerHTML = `${message} <div class="spinner">
-        <div class="dot dot-1"></div>
-        <div class="dot dot-2"></div>
-        <div class="dot dot-3"></div>
-    </div>`;
+    document.getElementById('loadingText').textContent = message;
+    document.getElementById('loadingMessage').classList.remove('hidden');
 }
 
 checkButton.addEventListener('click', async function () {
@@ -118,9 +139,9 @@ checkButton.addEventListener('click', async function () {
     document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = '';
     document.getElementById('bestDNSContainer').innerHTML = '';
 
-    await updateLoadingMessage('در حال گرم کردن سرورها');
+    await updateLoadingMessage('Warming up DNS servers...');
     await warmUpDNSServers();
-    await updateLoadingMessage('در حال تحلیل DNSها');
+    await updateLoadingMessage('Testing DNS performance...');
     await performDNSTests();
 
     document.getElementById('loadingMessage').classList.add('hidden');
@@ -216,39 +237,39 @@ function updateResult(server) {
     if (!row) {
         row = document.createElement('tr');
         row.setAttribute('data-server-name', server.name);
-        row.classList.add('border-b', 'border-gray-300', 'hover:bg-gray-200', 'dark:border-gray-600', 'dark:hover:bg-gray-700');
+        row.classList.add('border-b', 'border-gray-700', 'hover:bg-white', 'hover:bg-opacity-5');
         table.appendChild(row);
 
         detailsRow = document.createElement('tr');
-        detailsRow.classList.add('details-row', 'hidden', 'border-b', 'border-gray-300', 'hover:bg-gray-200', 'dark:border-gray-600', 'dark:hover:bg-gray-700');
+        detailsRow.classList.add('details-row', 'hidden', 'border-b', 'border-gray-700');
         table.appendChild(detailsRow);
     } else {
         detailsRow = row.nextElementSibling;
     }
 
     row.innerHTML = `
-        <td class="text-right py-2 px-4 dark:text-gray-300">${server.name}
-        <span class="cursor-pointer ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex" onclick="copyToClipboard('DoH Server URL: ${server.url}' + '\\n' + 'IP Addresses: ${server.ips.join(', ')}', this)" title="Copy server details">
+        <td class="text-left py-2 px-4">${server.name}
+        <span class="cursor-pointer ml-2 px-2 py-1 text-xs bg-blue-600 bg-opacity-30 rounded border border-blue-500 inline-flex items-center gap-1" onclick="copyToClipboard('DoH Server URL: ${server.url}' + '\\n' + 'IP Addresses: ${server.ips.join(', ')}', this)" title="Copy server details">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
             </svg>
             Copy
         </span></td>
-        <td class="text-center py-2 px-4 dark:text-gray-300">${server.speed.min !== 'Unavailable' ? server.speed.min.toFixed(2) : 'Unavailable'}</td>
-        <td class="text-center py-2 px-4 dark:text-gray-300">${server.speed.median !== 'Unavailable' ? server.speed.median.toFixed(2) : 'Unavailable'}</td>
-        <td class="text-center py-2 px-4 dark:text-gray-300">${server.speed.avg !== 'Unavailable' ? server.speed.avg.toFixed(2) : 'Unavailable'}</td>
-        <td class="text-center py-2 px-4 dark:text-gray-300">${server.speed.max !== 'Unavailable' ? server.speed.max.toFixed(2) : 'Unavailable'}</td>
+        <td class="text-center py-2 px-4">${server.speed.min !== 'Unavailable' ? server.speed.min.toFixed(2) : 'Unavailable'}</td>
+        <td class="text-center py-2 px-4">${server.speed.median !== 'Unavailable' ? server.speed.median.toFixed(2) : 'Unavailable'}</td>
+        <td class="text-center py-2 px-4">${server.speed.avg !== 'Unavailable' ? server.speed.avg.toFixed(2) : 'Unavailable'}</td>
+        <td class="text-center py-2 px-4">${server.speed.max !== 'Unavailable' ? server.speed.max.toFixed(2) : 'Unavailable'}</td>
     `;
 
     detailsRow.innerHTML = `
-    <td colspan="5" class="py-2 px-4 dark:bg-gray-800 dark:text-gray-300">
-        <div>زمان پاسخ برای هر هاست:</div>
+    <td colspan="5" class="py-2 px-4">
+        <div>Individual timings:</div>
         <ul>
             ${server.individualResults.map(result => {
         if (typeof result.speed === 'number') {
             return `<li>${result.website}: ${result.speed.toFixed(2)} ms</li>`;
         } else {
-            return `<li>${result.website}: در دسترس نیست</li>`;
+            return `<li>${result.website}: Unavailable</li>`;
         }
     }).join('')}
         </ul>
@@ -307,7 +328,7 @@ function updateChart() {
         data: {
             labels: validData.map(item => item.name),
             datasets: [{
-                label: 'میانگین زمان پاسخ (ms)',
+                label: 'Average Response Time (ms)',
                 data: validData.map(item => item.avg),
                 backgroundColor: validData.map(item => getPerformanceColor(item.avg, validData)),
                 borderColor: validData.map(item => getPerformanceColor(item.avg, validData, true)),
@@ -326,17 +347,17 @@ function updateChart() {
                         label: function(context) {
                             const server = validData[context.dataIndex];
                             return [
-                                `میانگین: ${server.avg.toFixed(2)}ms`,
-                                `حداقل: ${server.min?.toFixed(2) || 'نامشخص'}ms`,
-                                `حداکثر: ${server.max?.toFixed(2) || 'نامشخص'}ms`
+                                `Avg: ${server.avg.toFixed(2)}ms`,
+                                `Min: ${server.min?.toFixed(2) || 'N/A'}ms`,
+                                `Max: ${server.max?.toFixed(2) || 'N/A'}ms`
                             ];
                         }
                     }
                 }
             },
             scales: {
-                x: { min: scaleMin, title: { display: true, text: 'زمان پاسخ (ms)' }, ticks: { callback: v => v.toFixed(0) + 'ms' } },
-                y: { title: { display: window.innerWidth >= 768, text: 'سرورهای DNS' }, ticks: { maxRotation: 0, font: { size: 11 } } }
+                x: { min: scaleMin, title: { display: true, text: 'Response Time (ms)' }, ticks: { callback: v => v.toFixed(0) + 'ms' } },
+                y: { title: { display: window.innerWidth >= 768, text: 'DNS Servers' }, ticks: { maxRotation: 0, font: { size: 11 } } }
             },
             layout: { padding: { left: 20, right: 20, top: 15, bottom: 15 } }
         }
@@ -396,10 +417,10 @@ function sortTable(columnIndex) {
 function copyToClipboard(text, buttonElement) {
     event.stopPropagation();
     navigator.clipboard.writeText(text).then(() => {
-        buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 border border-green-400 text-green-700 dark:text-green-300 rounded flex items-center gap-1 transition-all duration-200 select-none inline-flex";
-        buttonElement.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> کپی شد!`;
+        buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-green-600 bg-opacity-40 rounded border border-green-500 inline-flex items-center gap-1";
+        buttonElement.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!`;
         setTimeout(() => {
-            buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded flex items-center gap-1 transition-all duration-200 hover:-translate-y-0.5 select-none inline-flex";
+            buttonElement.className = "cursor-pointer ml-2 px-2 py-1 text-xs bg-blue-600 bg-opacity-30 rounded border border-blue-500 inline-flex items-center gap-1";
             buttonElement.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy`;
         }, 2000);
     }).catch(() => {});
@@ -407,7 +428,7 @@ function copyToClipboard(text, buttonElement) {
 
 document.getElementById('cta').addEventListener('click', function () {
     if (navigator.share) {
-        navigator.share({ title: 'سریع‌ترین DNS رو پیدا کن', text: 'با این ابزار بهترین DNS برای گیم و اینترنت رو پیدا کن!', url: window.location.href });
+        navigator.share({ title: 'Find the Fastest DNS', text: 'Test DNS speed for gaming and internet!', url: window.location.href });
     }
 });
 
@@ -437,13 +458,13 @@ document.addEventListener('DOMContentLoaded', function () {
         list.innerHTML = '';
         topWebsites.forEach((site, index) => {
             const li = document.createElement("li");
-            li.className = 'px-2 py-1 mb-1 bg-gray-200 rounded flex justify-between items-center border-b border-gray-300 dark:bg-gray-700 dark:border-gray-600';
+            li.className = 'px-2 py-1 mb-1 bg-white bg-opacity-10 rounded flex justify-between items-center border-b border-gray-600';
             const siteText = document.createElement("span");
             siteText.textContent = site;
             li.appendChild(siteText);
             const removeBtn = document.createElement("button");
-            removeBtn.className = 'bg-red-500 text-white rounded px-2 py-1 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800';
-            removeBtn.textContent = 'حذف';
+            removeBtn.className = 'bg-red-600 text-white rounded px-2 py-1 hover:bg-red-700';
+            removeBtn.textContent = 'Remove';
             removeBtn.onclick = () => { topWebsites.splice(index, 1); renderList(); };
             li.appendChild(removeBtn);
             list.appendChild(li);
@@ -459,7 +480,7 @@ document.addEventListener('DOMContentLoaded', function () {
             topWebsites.push(host);
             renderList();
         } else if (!host) {
-            alert("لطفاً یک URL یا هاست معتبر وارد کنید.");
+            alert("Please enter a valid URL or hostname.");
         }
         input.value = '';
     };
@@ -493,9 +514,9 @@ document.addEventListener('DOMContentLoaded', function () {
             dnsServers.push({ name, url, ips, type: 'post', allowCors: false });
             nameInput.value = urlInput.value = ipsInput.value = '';
             dohModal.style.display = "none";
-            alert("سرور DNS با موفقیت اضافه شد!");
+            alert("DNS server added successfully!");
         } else {
-            alert("لطفاً نام و آدرس DoH را وارد کنید.");
+            alert("Please enter name and DoH URL.");
         }
     };
 
