@@ -163,6 +163,37 @@
                 Share Tool
             </button>
         </div>
+
+        <!-- === بخش جدید: Disclaimer و توضیحات === -->
+        <div class="mt-16 glass-card p-6 md:p-8 rounded-2xl max-w-5xl mx-auto">
+            <h2 class="text-2xl font-bold text-cyan-300 mb-6 text-center">Disclaimer & Technical Notes</h2>
+            <div class="space-y-5 text-gray-200 leading-relaxed text-sm md:text-base">
+                <p>
+                    <strong>This DNS Speed Test tool runs entirely in your browser</strong>, sending live DNS-over-HTTPS (DoH) queries from your local environment. No server-side code is involved, and <strong>no personal data is collected</strong>. By measuring directly from your current network, the tool aims to provide accurate, real-world results.
+                </p>
+
+                <p>
+                    <strong>Warm-Up Phase:</strong> Before timing each DNS server, the script primes connections and caches to minimize the overhead of TCP/TLS handshakes. This warm-up step helps ensure consistent, ready-to-go conditions when actual measurements begin. While it adds a small initial delay, it more fairly represents typical DoH performance once connections are established.
+                </p>
+
+                <p>
+                    <strong>Time Measurement & Browser Overhead:</strong> We use the browser’s <code>fetch</code> and <code>performance.now()</code> APIs to measure full DoH round-trip times. Because this includes HTTP/TLS overhead, results may be higher than raw DNS queries performed by other tools. Depending on server capabilities, our script may use GET or POST, CORS or no-cors mode. Some endpoints require a preflight request, which can slightly affect timings.
+                </p>
+
+                <p>
+                    <strong>Timeouts & Unavailable Results:</strong> Each query times out after 5 seconds. If a server does not respond in that window, it appears as <em>Unavailable</em>. This ensures the test continues promptly even when certain DNS endpoints are slow or unreachable.
+                </p>
+
+                <p>
+                    <strong>Influence of Local Conditions:</strong> Network latency, bandwidth, and browser load can cause variability. We recommend running multiple tests at different times or under different network conditions to get a broader picture. The tool’s output is best used as a <strong>relative comparison</strong> among DNS servers under your specific circumstances rather than an absolute global measure.
+                </p>
+
+                <p>
+                    While we strive for accuracy by testing each DNS server with the same set of hostnames (and reusing warm connections), results are still <strong>indicative</strong>. Use them as a guide when deciding which DNS server offers the best performance for your location and environment.
+                </p>
+            </div>
+        </div>
+        <!-- === پایان بخش Disclaimer === -->
     </div>
 
     <!-- Modals (unchanged from original) -->
