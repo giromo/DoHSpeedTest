@@ -52,7 +52,7 @@ const dnsServers = [
   { name: "Avast (Default)", url: "https://secure.avastdns.com/dns-query", ips: ["8.26.56.26", "8.20.247.20"] },
   { name: "ComSS", url: "https://dns.comss.one/dns-query", ips: ["95.217.205.213", "2a01:4f9:c010:3f02::1"] },
   { name: "Nord DNS", url: "https://dns1.nordvpn.com/dns-query", ips: ["103.86.96.100", "103.86.99.100"] },
-  {name: "Windscribe DNS", url: "https://windscribe.com/dns-query", ips: ["10.255.255.3", "10.255.255.2"] },
+  { name: "Windscribe DNS", url: "https://windscribe.com/dns-query", ips: ["10.255.255.3", "10.255.255.2"] },
   { name: "Kernel Error", url: "https://dns.kernel-error.de/dns-query", ips: [] },
   { name: "DNS-53", url: "https://dns.dns-53.us/dns-query", ips: [] },
   { name: "Wikimedia", url: "https://wikimedia-dns.org/dns-query", ips: [] },
