@@ -7,6 +7,7 @@ const dnsServers = [
   { "name": "Begzar (بگذر)", "url": "https://dns.begzar.ir/dns-query", "type": "post", "allowCors": false, "ips": ["185.55.226.25", "185.55.225.26"] },
   { "name": "403.online", "url": "https://dns.403.online/dns-query", "type": "post", "allowCors": false, "ips": ["10.202.10.202", "10.202.10.102"] },
   { "name": "Radar Game", "url": "https://dns.radar.game/dns-query", "ips": ["10.202.10.10", "10.202.10.11"] },
+  { "name": "ZeusDNS", "url": "https://zeusdns.ir/dns-query", "ips": ["37.32.5.60", "37.32.5.61"] },
   { "name": "Electro", "url": "https://dns.electrotm.org/dns-query", "ips": ["78.157.42.100", "78.157.42.101"] },
   { "name": "xStack", "url": "https://rustdns.devefun.org/dns-query", "ips": [] },
   { "name": "AdGuard", "url": "https://dns.adguard-dns.com/dns-query", "ips": ["94.140.14.14", "94.140.15.15"] },
